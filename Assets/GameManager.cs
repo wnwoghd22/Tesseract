@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
     Transform map;
+    [SerializeField]
+    Transform player;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +23,11 @@ public class GameManager : MonoBehaviour
             Vector3 scale = map.localScale;
             scale.y *= -1;
             map.localScale = scale;
+
+            Vector3 mapPos = map.position;
+            Vector3 playerPos = player.position;
+            playerPos.y = mapPos.y - (playerPos.y - mapPos.y);
+            player.position = playerPos;
         }
     }
 }
