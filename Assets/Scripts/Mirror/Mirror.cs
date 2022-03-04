@@ -13,7 +13,7 @@ public class Mirror : MonoBehaviour
     [SerializeField]
     Material material;
     [SerializeField]
-    ContactFilter2D filter;
+    LayerMask mirror;
     LaserBeam beam;
 
     Vector3 direction;
@@ -29,11 +29,11 @@ public class Mirror : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isLit)
-        {
-            Destroy(GameObject.Find("Laser Beam"));
-            beam = new LaserBeam(gameObject.transform.position, direction, material, filter);
-        }
+        //if (isLit)
+        //{
+        //    Destroy(GameObject.Find("Laser Beam"));
+        //    beam = new LaserBeam(gameObject.transform.position, direction, material, filter);
+        //}
     }
 
     private void OnMouseDown()
@@ -48,7 +48,10 @@ public class Mirror : MonoBehaviour
 
         Vector3 p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        direction = p - transform.position; 
+        direction = p - transform.position;
+
+        Destroy(GameObject.Find("Laser Beam"));
+        beam = new LaserBeam(gameObject.transform.position, direction, material, mirror);
     }
     private void OnMouseDrag()
     {
@@ -58,6 +61,9 @@ public class Mirror : MonoBehaviour
         Vector3 p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         direction = p - transform.position;
+
+        Destroy(GameObject.Find("Laser Beam"));
+        beam = new LaserBeam(gameObject.transform.position, direction, material, mirror);
     }
     private void OnMouseUp()
     {
@@ -66,6 +72,7 @@ public class Mirror : MonoBehaviour
 
     public void Unlit()
     {
+        Debug.Log("unlit");
         gameObject.layer = LAYER_MIRROR;
         isLit = false;
         beam = null;

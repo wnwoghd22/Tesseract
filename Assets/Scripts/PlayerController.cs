@@ -14,6 +14,9 @@ public class PlayerController : MonoBehaviour
     private LayerMask mirror;
     private Mirror available;
 
+    [SerializeField]
+    private float moveSpeed = 3.0f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +26,24 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        float h = Input.GetAxis("Horizontal");
+
+        if (h > 0.5f)
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = 1f;
+            transform.localScale = scale;
+        }
+        else if (h < -0.5f) 
+        {
+            Vector3 scale = transform.localScale;
+            scale.x = -1f;
+            transform.localScale = scale;
+        }
+        Vector3 pos = transform.position;
+        pos.x += h * moveSpeed * Time.deltaTime;
+        transform.position = pos;
+
         CheckMirror();
         Debug.DrawRay(transform.position, transform.right, Color.white);
     }
@@ -33,7 +54,7 @@ public class PlayerController : MonoBehaviour
 
         if (hit)
         {
-            Debug.Log("hit!");
+            //Debug.Log("hit!");
 
             if (available != null)
             {
@@ -52,10 +73,11 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Debug.Log("no hit");
+            //Debug.Log("no hit");
 
             if (available != null)
             {
+                Debug.Log("leave");
                 available.Disable();
                 available = null;
             }
