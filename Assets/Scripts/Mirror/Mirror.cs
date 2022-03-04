@@ -52,9 +52,16 @@ public class Mirror : MonoBehaviour
 
         direction = p - transform.position;
     }
+    private void OnMouseUp()
+    {
+        //Unlit();
+    }
 
     public void Unlit()
     {
+        gameObject.layer = LAYER_MIRROR;
         isLit = false;
+        beam = null;
+        Destroy(GameObject.Find("Laser Beam"));
     }
 }
