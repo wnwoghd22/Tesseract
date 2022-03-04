@@ -10,14 +10,16 @@ public class LaserBeam
     LineRenderer laser;
 
     List<Vector3> laserIndices = new List<Vector3>();
+    ContactFilter2D filter;
 
-    public LaserBeam(Vector3 pos, Vector3 dir, Material material)
+    public LaserBeam(Vector3 pos, Vector3 dir, Material material, ContactFilter2D filter)
     {
         this.laser = new LineRenderer();
         this.laserObj = new GameObject();
         this.laserObj.name = "Laser Beam";
         this.pos = pos;
         this.dir = dir;
+        this.filter = filter;
 
         this.laser = this.laserObj.AddComponent(typeof(LineRenderer)) as LineRenderer;
         this.laser.startWidth = 0.5f;
@@ -34,12 +36,11 @@ public class LaserBeam
         laserIndices.Add(pos);
 
         Ray2D ray = new Ray2D(pos, dir);
-        RaycastHit2D hit = Physics2D.Raycast(pos, dir);
+        RaycastHit2D hit = Physics2D.Raycast(pos, dir, float.PositiveInfinity, filter.layerMask);
 
         if (hit)
         {
-            laserIndices.Add(hit.point);
-            UpdateLaser();
+            CheckHit(hit, dir, laser);
         }
         else
         {
@@ -57,6 +58,22 @@ public class LaserBeam
         {
             laser.SetPosition(count, idx);
             ++count;
+        }
+    }
+
+    private void CheckHit(RaycastHit2D hitInfo, Vector3 direction, LineRenderer laser)
+    {
+        if (hitInfo.collider.gameObject.tag == "Mirror")
+        {
+            Vector3 pos = hitInfo.point;
+            Vector3 dir = Vector3.Reflect(direction, hitInfo.normal);
+
+            CastRay(pos + dir * 0.1f, dir, laser);
+        } 
+        else
+        {
+            laserIndices.Add(hitInfo.point);
+            UpdateLaser();
         }
     }
 }
