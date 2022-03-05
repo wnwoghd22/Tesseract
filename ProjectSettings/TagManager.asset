@@ -17,9 +17,9 @@ TagManager:
   - MirrorLit
   - Light
   - LightCollider
-  - 
-  - 
-  - 
+  - Box
+  - Platform
+  - Door
   - 
   - 
   - 

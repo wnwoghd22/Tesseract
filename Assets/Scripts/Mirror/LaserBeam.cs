@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LaserBeam
 {
+    const int LAYER_MIRROR = 7;
+    const int LAYER_MIRROR_LIT = 8;
     const int LAYER_LIGHT = 9;
 
     Vector3 pos, dir;
@@ -76,6 +78,10 @@ public class LaserBeam
     {
         if (hitInfo.collider.gameObject.tag == "Mirror")
         {
+            if (hitInfo.collider.gameObject.layer == LAYER_MIRROR_LIT)
+                return;
+           
+
             Vector3 pos = hitInfo.point;
             Vector3 dir = Vector3.Reflect(direction, hitInfo.normal);
 

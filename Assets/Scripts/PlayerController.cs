@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
         transform.position = pos;
 
         CheckMirror();
-        Debug.DrawRay(transform.position, transform.right, Color.white);
+        Debug.DrawRay(transform.position, transform.right * transform.localScale.x, Color.white);
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -71,11 +71,16 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+
+        }
     }
 
     private void CheckMirror()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.right, 1.5f, mirror);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector3.right * transform.localScale.x, 1.5f, mirror);
 
         if (hit)
         {
