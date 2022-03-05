@@ -83,6 +83,7 @@ public class PlayerController : MonoBehaviour
             {
                 tempRoom = box.parent; // get room transform
                 box.SetParent(this.transform);
+                Destroy(GameObject.Find("Laser Beam"));
             }
         }
         if (Input.GetKeyUp(KeyCode.Space))
