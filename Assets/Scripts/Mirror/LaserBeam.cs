@@ -4,22 +4,30 @@ using UnityEngine;
 
 public class LaserBeam
 {
+    const int LAYER_LIGHT = 9;
+
     Vector3 pos, dir;
 
     GameObject laserObj;
     LineRenderer laser;
+    MeshCollider meshCollider;
 
     List<Vector3> laserIndices = new List<Vector3>();
     LayerMask mirror;
 
+    PolygonCollider2D laserCollider;
+
     public LaserBeam(Vector3 pos, Vector3 dir, Material material, LayerMask mirror)
     {
-        this.laser = new LineRenderer();
+        //this.laser = new LineRenderer();
         this.laserObj = new GameObject();
+        this.laserObj.layer = LAYER_LIGHT;
         this.laserObj.name = "Laser Beam";
+
         this.pos = pos;
         this.dir = dir;
         this.mirror = mirror;
+        //this.laserCollider = GetComponent<>
 
         this.laser = this.laserObj.AddComponent(typeof(LineRenderer)) as LineRenderer;
         this.laser.startWidth = 0.5f;
@@ -27,6 +35,11 @@ public class LaserBeam
         this.laser.material = material;
         this.laser.startColor = Color.yellow;
         this.laser.endColor = Color.yellow;
+
+        this.meshCollider = this.laserObj.AddComponent(typeof(MeshCollider)) as MeshCollider;
+        Mesh mesh = new Mesh();
+        laser.BakeMesh(mesh, true);
+        meshCollider.sharedMesh = mesh;
 
         CastRay(pos, dir, laser);
     }
@@ -36,7 +49,7 @@ public class LaserBeam
         laserIndices.Add(pos);
 
         Ray2D ray = new Ray2D(pos, dir);
-        RaycastHit2D hit = Physics2D.Raycast(pos, dir, float.PositiveInfinity, mirror);
+        RaycastHit2D hit = Physics2D.Raycast(pos + dir * 0.1f, dir, float.PositiveInfinity, mirror); // prevent infinite loop
 
         if (hit)
         {
@@ -68,7 +81,7 @@ public class LaserBeam
             Vector3 pos = hitInfo.point;
             Vector3 dir = Vector3.Reflect(direction, hitInfo.normal);
 
-            CastRay(pos + dir * 0.1f, dir, laser);
+            CastRay(pos, dir, laser);
         } 
         else
         {
