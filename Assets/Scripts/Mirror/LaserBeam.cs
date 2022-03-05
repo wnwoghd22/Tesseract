@@ -79,9 +79,12 @@ public class LaserBeam
         if (hitInfo.collider.gameObject.tag == "Mirror")
         {
             if (hitInfo.collider.gameObject.layer == LAYER_MIRROR_LIT)
-                return;
-           
+            {
+                laserIndices.Add(hitInfo.point);
+                UpdateLaser();
 
+                return;
+            }
             Vector3 pos = hitInfo.point;
             Vector3 dir = Vector3.Reflect(direction, hitInfo.normal);
 
