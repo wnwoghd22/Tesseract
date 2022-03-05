@@ -11,11 +11,10 @@ public class LaserBeam
     GameObject laserObj;
     LineRenderer laser;
     MeshCollider meshCollider;
+    EdgeCollider2D laserCollider;
 
     List<Vector3> laserIndices = new List<Vector3>();
     LayerMask mirror;
-
-    PolygonCollider2D laserCollider;
 
     public LaserBeam(Vector3 pos, Vector3 dir, Material material, LayerMask mirror)
     {
@@ -36,10 +35,13 @@ public class LaserBeam
         this.laser.startColor = Color.yellow;
         this.laser.endColor = Color.yellow;
 
-        this.meshCollider = this.laserObj.AddComponent(typeof(MeshCollider)) as MeshCollider;
-        Mesh mesh = new Mesh();
-        laser.BakeMesh(mesh, true);
-        meshCollider.sharedMesh = mesh;
+        //this.meshCollider = this.laserObj.AddComponent<MeshCollider>();
+        //Mesh mesh = new Mesh();
+        //this.laser.BakeMesh(mesh);
+        ////this.laser.BakeMesh(mesh, true);
+        //this.meshCollider.sharedMesh = mesh;
+
+        this.laserCollider = this.laserObj.AddComponent<EdgeCollider2D>();
 
         CastRay(pos, dir, laser);
     }
@@ -66,12 +68,16 @@ public class LaserBeam
     {
         int count = 0;
         laser.positionCount = laserIndices.Count;
+        Vector2[] vector2s = new Vector2[laserIndices.Count];
 
         foreach (Vector3 idx in laserIndices)
         {
             laser.SetPosition(count, idx);
+            vector2s[count] = idx;
             ++count;
         }
+
+        laserCollider.points = vector2s;
     }
 
     private void CheckHit(RaycastHit2D hitInfo, Vector3 direction, LineRenderer laser)

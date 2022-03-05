@@ -14,6 +14,8 @@ public class Mirror : MonoBehaviour
     Material material;
     [SerializeField]
     LayerMask mirror;
+    [SerializeField]
+    LayerMask maskLight;
     LaserBeam beam;
 
     Vector3 direction;
@@ -87,5 +89,15 @@ public class Mirror : MonoBehaviour
     {
         available = false;
         Unlit();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log("hit!");
+
+        if ((1 << collision.gameObject.layer & maskLight.value) != 0)
+        {
+            Debug.Log("light hit!");
+        }
     }
 }
