@@ -147,7 +147,7 @@ MonoBehaviour:
   material: {fileID: 2100000, guid: b2b64a8f8d16b3242a56cb213b33e488, type: 2}
   surface:
     serializedVersion: 2
-    m_Bits: 183
+    m_Bits: 2231
   maskLight:
     serializedVersion: 2
     m_Bits: 512

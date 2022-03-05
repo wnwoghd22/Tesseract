@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    const int LAYER_HOLD_TRIGGER = 14;
+
     // TODO: implement & complete portal system
     /*
      if mirror is close and in front of player, then that mirror is AVAILABLE.
@@ -13,6 +15,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private LayerMask mirror;
     private Mirror available;
+
+    private Transform box;
+    private Transform tempRoom;
 
     [SerializeField]
     private float moveSpeed = 3.0f;
@@ -74,7 +79,18 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-
+            if (box)
+            {
+                tempRoom = box.parent; // get room transform
+                box.SetParent(this.transform);
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            if (box)
+            {
+                box.SetParent(tempRoom);
+            }
         }
     }
 
@@ -112,6 +128,23 @@ public class PlayerController : MonoBehaviour
                 available = null;
             }
 
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LAYER_HOLD_TRIGGER)
+        {
+            Debug.Log("can hold box");
+            box = collision.gameObject.transform.parent;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LAYER_HOLD_TRIGGER)
+        {
+            Debug.Log("leave box");
+            box = null;
         }
     }
 }
