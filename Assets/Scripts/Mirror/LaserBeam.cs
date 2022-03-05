@@ -10,7 +10,6 @@ public class LaserBeam
 
     GameObject laserObj;
     LineRenderer laser;
-    MeshCollider meshCollider;
     EdgeCollider2D laserCollider;
 
     List<Vector3> laserIndices = new List<Vector3>();
@@ -18,7 +17,6 @@ public class LaserBeam
 
     public LaserBeam(Vector3 pos, Vector3 dir, Material material, LayerMask mirror)
     {
-        //this.laser = new LineRenderer();
         this.laserObj = new GameObject();
         this.laserObj.layer = LAYER_LIGHT;
         this.laserObj.name = "Laser Beam";
@@ -26,7 +24,6 @@ public class LaserBeam
         this.pos = pos;
         this.dir = dir;
         this.mirror = mirror;
-        //this.laserCollider = GetComponent<>
 
         this.laser = this.laserObj.AddComponent(typeof(LineRenderer)) as LineRenderer;
         this.laser.startWidth = 0.5f;
@@ -35,13 +32,8 @@ public class LaserBeam
         this.laser.startColor = Color.yellow;
         this.laser.endColor = Color.yellow;
 
-        //this.meshCollider = this.laserObj.AddComponent<MeshCollider>();
-        //Mesh mesh = new Mesh();
-        //this.laser.BakeMesh(mesh);
-        ////this.laser.BakeMesh(mesh, true);
-        //this.meshCollider.sharedMesh = mesh;
-
         this.laserCollider = this.laserObj.AddComponent<EdgeCollider2D>();
+        this.laserCollider.isTrigger = true;
 
         CastRay(pos, dir, laser);
     }

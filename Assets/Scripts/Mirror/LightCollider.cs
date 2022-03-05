@@ -43,7 +43,17 @@ public class LightCollider : MonoBehaviour
 
         if ((maskLight.value & 1 << collision.gameObject.layer) != 0)
         {
-            Debug.Log("triggerlight hit!");
+            Debug.Log("trigger light hit!");
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        Debug.Log("trigger stay!");
+
+        if ((maskLight.value & 1 << collision.gameObject.layer) != 0)
+        {
+            Debug.Log("trigger light stay!");
         }
     }
 }

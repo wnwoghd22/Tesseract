@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(Collider2D), typeof(Rigidbody2D))]
 public class Mirror : MonoBehaviour
 {
     const int LAYER_MIRROR = 7;
@@ -13,7 +14,7 @@ public class Mirror : MonoBehaviour
     [SerializeField]
     Material material;
     [SerializeField]
-    LayerMask mirror;
+    LayerMask surface;
     [SerializeField]
     LayerMask maskLight;
     LaserBeam beam;
@@ -21,23 +22,25 @@ public class Mirror : MonoBehaviour
     Vector3 direction;
 
     private bool available = false;
+    public bool IsPortal { get; private set; }
+
 
     // Start is called before the first frame update
     void Start()
     {
         direction = gameObject.transform.right;
+        IsPortal = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (isLit)
-        //{
-        //    Destroy(GameObject.Find("Laser Beam"));
-        //    beam = new LaserBeam(gameObject.transform.position, direction, material, filter);
-        //}
+#if UNITY_ANDROID
+        HandleTouch();
+#endif
     }
 
+#if UNITY_EDITOR
     private void OnMouseDown()
     {
         if (!available)
@@ -53,7 +56,7 @@ public class Mirror : MonoBehaviour
         direction = p - transform.position;
 
         Destroy(GameObject.Find("Laser Beam"));
-        beam = new LaserBeam(gameObject.transform.position, direction, material, mirror);
+        beam = new LaserBeam(gameObject.transform.position, direction, material, surface);
     }
     private void OnMouseDrag()
     {
@@ -65,12 +68,48 @@ public class Mirror : MonoBehaviour
         direction = p - transform.position;
 
         Destroy(GameObject.Find("Laser Beam"));
-        beam = new LaserBeam(gameObject.transform.position, direction, material, mirror);
+        beam = new LaserBeam(gameObject.transform.position, direction, material, surface);
     }
     private void OnMouseUp()
     {
         //Unlit();
     }
+#endif
+#if UNITY_ANDROID
+    private void HandleTouch()
+    {
+        if (!available)
+            return;
+
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.zero);
+
+                    if (hitInfo.collider)
+                    {
+                        if (hitInfo.collider.gameObject == this)
+                        {
+                            Debug.Log("touch mirror!");
+                        }
+                    }
+                    break;
+                case TouchPhase.Moved:
+                    break;
+                case TouchPhase.Stationary:
+                    break;
+                case TouchPhase.Ended:
+                    break;
+                case TouchPhase.Canceled:
+                    break;
+            }
+        }
+    }
+#endif
 
     public void Unlit()
     {
@@ -82,6 +121,7 @@ public class Mirror : MonoBehaviour
     }
     public void Enable()
     {
+        Debug.Log("available");
         available = true;
     }
 
@@ -93,11 +133,36 @@ public class Mirror : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("hit!");
-
-        if ((1 << collision.gameObject.layer & maskLight.value) != 0)
+        if (!available && !IsPortal)
         {
-            Debug.Log("light hit!");
+            if ((1 << collision.gameObject.layer & maskLight.value) != 0)
+            {
+                Debug.Log("light hit!");
+                IsPortal = true;
+            }
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!available && !IsPortal)
+        {
+            if ((1 << collision.gameObject.layer & maskLight.value) != 0)
+            {
+                Debug.Log("trigger light!");
+                IsPortal = true;
+            }
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (IsPortal)
+        {
+            if ((1 << collision.gameObject.layer & maskLight.value) != 0)
+            {
+                Debug.Log("trigger light!");
+                IsPortal = false;
+            }
         }
     }
 }

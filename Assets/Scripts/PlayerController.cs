@@ -46,6 +46,31 @@ public class PlayerController : MonoBehaviour
 
         CheckMirror();
         Debug.DrawRay(transform.position, transform.right, Color.white);
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow, 100f);
+
+            RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+            if (hitInfo)
+            {
+                Debug.Log(hitInfo.transform.name);
+
+                if (hitInfo.collider != null)
+                {
+                    if (hitInfo.collider.gameObject.tag == "Mirror")
+                    {
+                        Mirror target = hitInfo.collider.gameObject.GetComponent<Mirror>();
+
+                        if (target.IsPortal)
+                            this.transform.position = target.transform.position;
+                    }
+                }
+            }
+        }
     }
 
     private void CheckMirror()
