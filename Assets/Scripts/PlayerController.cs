@@ -22,6 +22,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 3.0f;
 
+    [SerializeField] private JoyStick moveStick;
+    [SerializeField] private JoyButton holdButton;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +34,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+#if UNITY_EDITOR
         float h = Input.GetAxis("Horizontal");
 
         if (h > 0.5f)
@@ -48,6 +52,39 @@ public class PlayerController : MonoBehaviour
         Vector3 pos = transform.position;
         pos.x += h * moveSpeed * Time.deltaTime;
         transform.position = pos;
+#endif
+#if UNITY_ANDROID
+        switch (moveStick.State)
+        {
+            case eButtonState.None:
+                break;
+            case eButtonState.Down:
+                break;
+            case eButtonState.Pressed:
+                Vector2 inputDir = moveStick.InputDir;
+
+                float x = inputDir.x;
+
+                if (x > 0.5f)
+                {
+                    Vector3 scale = transform.localScale;
+                    scale.x = 1f;
+                    transform.localScale = scale;
+                }
+                else if (x < -0.5f)
+                {
+                    Vector3 scale = transform.localScale;
+                    scale.x = -1f;
+                    transform.localScale = scale;
+                }
+                Vector3 posAndroid = transform.position;
+                posAndroid.x += x * moveSpeed * Time.deltaTime;
+                transform.position = posAndroid;
+                break;
+            case eButtonState.Up:
+                break;
+        }
+#endif
 
         CheckMirror();
         Debug.DrawRay(transform.position, transform.right * transform.localScale.x, Color.white);

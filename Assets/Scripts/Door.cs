@@ -30,6 +30,15 @@ public class Door : MonoBehaviour
                 GoToTarget();
             }
         }
+#if UNITY_ANDROID
+        if (gm.EnterButton.State == eButtonState.Down)
+        {
+            if (open)
+            {
+                GoToTarget();
+            }
+        }
+#endif
     }
 
     public void GoToTarget()

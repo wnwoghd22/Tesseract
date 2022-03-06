@@ -13,6 +13,12 @@ public class GameManager : MonoBehaviour
 
     private bool fliped = false;
 
+    Vector2 beganPos;
+
+    [SerializeField]
+    private JoyButton enterButton;
+    public JoyButton EnterButton => enterButton;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,5 +52,37 @@ public class GameManager : MonoBehaviour
     {
         Vector3 targetPos = new Vector3(pos.x, pos.y, -10f);
         transformCamera.position = targetPos;
+    }
+
+    // TODO : implement non-virtual-button UI
+    private void HandleTouch()
+    {
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            switch (touch.phase)
+            {
+                case TouchPhase.Began:
+                    beganPos = touch.position;
+
+                    RaycastHit2D[] hitInfo = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(beganPos), Vector2.zero);
+
+                    foreach (RaycastHit2D info in hitInfo)
+                    {
+
+                    }
+
+                    break;
+                case TouchPhase.Moved:
+                    break;
+                case TouchPhase.Stationary:
+                    break;
+                case TouchPhase.Ended:
+                    break;
+                case TouchPhase.Canceled:
+                    break;
+            }
+        }
     }
 }
