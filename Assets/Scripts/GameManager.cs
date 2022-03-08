@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    private const int LAYER_PLAYER = 3;
+    private const int LAYER_MIRROR = 7;
+    private const int LAYER_BOX = 11;
+
     [SerializeField]
     Transform room;
     [SerializeField]
@@ -16,12 +20,12 @@ public class GameManager : MonoBehaviour
     Vector2 beganPos;
 
     [SerializeField]
-    private JoyButton enterButton;
-    public JoyButton EnterButton => enterButton;
+    private LayerMask touchables;
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(LAYER_BOX);
         SetCamerePos(room.position);
     }
 
@@ -39,6 +43,8 @@ public class GameManager : MonoBehaviour
             playerPos.y = mapPos.y - (playerPos.y - mapPos.y);
             player.position = playerPos;
         }
+
+        HandleMouse();
     }
 
     public void GoToTargetRoom(Door door)
@@ -54,6 +60,43 @@ public class GameManager : MonoBehaviour
         transformCamera.position = targetPos;
     }
 
+    private void HandleMouse()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            beganPos = Input.mousePosition;
+            
+            RaycastHit2D[] hitInfo = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(beganPos), Vector2.zero, float.PositiveInfinity, touchables);
+
+            if (hitInfo.Length == 0)
+            {
+                // player move
+                Debug.Log("mouse click : no colliders");
+            }
+            else
+            {
+                foreach (RaycastHit2D info in hitInfo)
+                {
+                    Debug.Log(info.collider.gameObject);
+
+                    switch(info.collider.gameObject.layer)
+                    {
+                        case LAYER_BOX:
+                            Debug.Log("touching box");
+                            break;
+                    }
+                }
+            }
+        }
+        else if (Input.GetMouseButton(0))
+        {
+
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+
+        }
+    }
     // TODO : implement non-virtual-button UI
     private void HandleTouch()
     {
@@ -68,11 +111,18 @@ public class GameManager : MonoBehaviour
 
                     RaycastHit2D[] hitInfo = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(beganPos), Vector2.zero);
 
-                    foreach (RaycastHit2D info in hitInfo)
+                    if (hitInfo.Length == 0)
                     {
+                        // player move
+                        Debug.Log("no colliders");
+                    } 
+                    else
+                    {
+                        foreach (RaycastHit2D info in hitInfo)
+                        {
 
+                        }
                     }
-
                     break;
                 case TouchPhase.Moved:
                     break;

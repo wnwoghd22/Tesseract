@@ -22,9 +22,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 3.0f;
 
-    [SerializeField] private JoyStick moveStick;
-    [SerializeField] private JoyButton holdButton;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -53,66 +50,34 @@ public class PlayerController : MonoBehaviour
         pos.x += h * moveSpeed * Time.deltaTime;
         transform.position = pos;
 #endif
-#if UNITY_ANDROID
-        switch (moveStick.State)
-        {
-            case eButtonState.None:
-                break;
-            case eButtonState.Down:
-                break;
-            case eButtonState.Pressed:
-                Vector2 inputDir = moveStick.InputDir;
-
-                float x = inputDir.x;
-
-                if (x > 0.5f)
-                {
-                    Vector3 scale = transform.localScale;
-                    scale.x = 1f;
-                    transform.localScale = scale;
-                }
-                else if (x < -0.5f)
-                {
-                    Vector3 scale = transform.localScale;
-                    scale.x = -1f;
-                    transform.localScale = scale;
-                }
-                Vector3 posAndroid = transform.position;
-                posAndroid.x += x * moveSpeed * Time.deltaTime;
-                transform.position = posAndroid;
-                break;
-            case eButtonState.Up:
-                break;
-        }
-#endif
 
         CheckMirror();
-        Debug.DrawRay(transform.position, transform.right * transform.localScale.x, Color.white);
+        //Debug.DrawRay(transform.position, transform.right * transform.localScale.x, Color.white);
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow, 100f);
+        //    Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow, 100f);
 
-            RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        //    RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
-            if (hitInfo)
-            {
-                Debug.Log(hitInfo.transform.name);
+        //    if (hitInfo)
+        //    {
+        //        Debug.Log(hitInfo.transform.name);
 
-                if (hitInfo.collider != null)
-                {
-                    if (hitInfo.collider.gameObject.tag == "Mirror")
-                    {
-                        Mirror target = hitInfo.collider.gameObject.GetComponent<Mirror>();
+        //        if (hitInfo.collider != null)
+        //        {
+        //            if (hitInfo.collider.gameObject.tag == "Mirror")
+        //            {
+        //                Mirror target = hitInfo.collider.gameObject.GetComponent<Mirror>();
 
-                        if (target.IsPortal)
-                            this.transform.position = target.transform.position;
-                    }
-                }
-            }
-        }
+        //                if (target.IsPortal)
+        //                    this.transform.position = target.transform.position;
+        //            }
+        //        }
+        //    }
+        //}
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
