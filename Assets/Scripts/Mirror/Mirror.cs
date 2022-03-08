@@ -21,95 +21,21 @@ public class Mirror : MonoBehaviour
 
     Vector3 direction;
 
-    private bool available = false;
-    public bool IsPortal { get; private set; }
+    public bool Available { get; private set; } = false;
+    public bool IsPortal { get; private set; } = false;
 
 
     // Start is called before the first frame update
     void Start()
     {
         direction = gameObject.transform.right;
-        IsPortal = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-#if UNITY_ANDROID
-        HandleTouch();
-#endif
+
     }
-
-#if UNITY_EDITOR
-    private void OnMouseDown()
-    {
-        if (!available)
-            return;
-
-        Debug.Log("on click");
-        gameObject.layer = LAYER_MIRROR_LIT;
-
-        isLit = true;
-
-        Vector3 p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        direction = p - transform.position;
-
-        Destroy(GameObject.Find("Laser Beam"));
-        beam = new LaserBeam(gameObject.transform.position, direction, material, surface);
-    }
-    private void OnMouseDrag()
-    {
-        if (!available)
-            return;
-
-        Vector3 p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        direction = p - transform.position;
-
-        Destroy(GameObject.Find("Laser Beam"));
-        beam = new LaserBeam(gameObject.transform.position, direction, material, surface);
-    }
-    private void OnMouseUp()
-    {
-        //Unlit();
-    }
-#endif
-#if UNITY_ANDROID
-    private void HandleTouch()
-    {
-        if (!available)
-            return;
-
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-
-            switch (touch.phase)
-            {
-                case TouchPhase.Began:
-                    RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touch.position), Vector2.zero);
-
-                    if (hitInfo.collider)
-                    {
-                        if (hitInfo.collider.gameObject == this)
-                        {
-                            Debug.Log("touch mirror!");
-                        }
-                    }
-                    break;
-                case TouchPhase.Moved:
-                    break;
-                case TouchPhase.Stationary:
-                    break;
-                case TouchPhase.Ended:
-                    break;
-                case TouchPhase.Canceled:
-                    break;
-            }
-        }
-    }
-#endif
 
     public void Unlit()
     {
@@ -122,18 +48,27 @@ public class Mirror : MonoBehaviour
     public void Enable()
     {
         Debug.Log("available");
-        available = true;
+        Available = true;
     }
 
     public void Disable()
     {
-        available = false;
+        Available = false;
         Unlit();
+    }
+
+    public void Emit(Vector3 dir)
+    {
+        if (gameObject.layer != LAYER_MIRROR_LIT)
+            gameObject.layer = LAYER_MIRROR_LIT;
+        isLit = true;
+        Destroy(GameObject.Find("Laser Beam"));
+        beam = new LaserBeam(gameObject.transform.position, dir, material, surface);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!available && !IsPortal)
+        if (!Available && !IsPortal)
         {
             if ((1 << collision.gameObject.layer & maskLight.value) != 0)
             {
@@ -142,10 +77,9 @@ public class Mirror : MonoBehaviour
             }
         }
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!available && !IsPortal)
+        if (!Available && !IsPortal)
         {
             if ((1 << collision.gameObject.layer & maskLight.value) != 0)
             {
@@ -165,4 +99,5 @@ public class Mirror : MonoBehaviour
             }
         }
     }
+
 }

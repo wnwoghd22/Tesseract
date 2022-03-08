@@ -7,12 +7,14 @@ public class Door : MonoBehaviour
 {
     [SerializeField]
     private Door target;
+    public Door Target => target;
+
     private GameManager gm;
     [SerializeField]
     private GameObject room;
     public GameObject Room => room;
 
-    private bool open = false;
+    public bool Available { get; private set; } = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,13 +25,15 @@ public class Door : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (open)
+            if (Available)
             {
                 GoToTarget();
             }
         }
+#endif
     }
 
     public void GoToTarget()
@@ -37,19 +41,13 @@ public class Door : MonoBehaviour
         gm.GoToTargetRoom(target);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void Enable()
     {
-        if (collision.gameObject.tag == "Player")
-        {
-            Debug.Log("door open");
-            open = true;
-        }
+        Debug.Log("door open");
+        Available = true;
     }
-    private void OnTriggerExit2D(Collider2D collision)
+    public void Disable()
     {
-        if (collision.gameObject.tag == "Player")
-        {
-            open = false;
-        }
+        Available = false;
     }
 }

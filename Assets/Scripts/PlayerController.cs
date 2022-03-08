@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    const int LAYER_DOOR = 13;
     const int LAYER_HOLD_TRIGGER = 14;
 
     // TODO: implement & complete portal system
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour
     private Mirror available;
 
     private Transform box;
+    public bool IsHoldBox { get; private set; }
     private Transform tempRoom;
 
     [SerializeField]
@@ -25,7 +27,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        IsHoldBox = false;
     }
 
     // Update is called once per frame
@@ -49,52 +51,48 @@ public class PlayerController : MonoBehaviour
         Vector3 pos = transform.position;
         pos.x += h * moveSpeed * Time.deltaTime;
         transform.position = pos;
-#endif
-
-        CheckMirror();
-        //Debug.DrawRay(transform.position, transform.right * transform.localScale.x, Color.white);
-
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        //    Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow, 100f);
-
-        //    RaycastHit2D hitInfo = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-
-        //    if (hitInfo)
-        //    {
-        //        Debug.Log(hitInfo.transform.name);
-
-        //        if (hitInfo.collider != null)
-        //        {
-        //            if (hitInfo.collider.gameObject.tag == "Mirror")
-        //            {
-        //                Mirror target = hitInfo.collider.gameObject.GetComponent<Mirror>();
-
-        //                if (target.IsPortal)
-        //                    this.transform.position = target.transform.position;
-        //            }
-        //        }
-        //    }
-        //}
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (box)
-            {
-                tempRoom = box.parent; // get room transform
-                box.SetParent(this.transform);
-                Destroy(GameObject.Find("Laser Beam"));
-            }
+            HoldBox();
         }
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            if (box)
-            {
-                box.SetParent(tempRoom);
-            }
+            UnholdBox();
         }
+#endif
+
+        CheckMirror();
+
+    }
+
+    public void HoldBox()
+    {
+        if (box)
+        {
+            IsHoldBox = true;
+            tempRoom = box.parent; // get room transform
+            box.SetParent(this.transform);
+            Destroy(GameObject.Find("Laser Beam"));
+        }
+    }
+    public void UnholdBox()
+    {
+        if (box)
+        {
+            IsHoldBox = false;
+            box.SetParent(tempRoom);
+        }
+    }
+    public void HoldBox(Transform box)
+    {
+        tempRoom = box.parent; // get room transform
+        box.SetParent(this.transform);
+        Destroy(GameObject.Find("Laser Beam"));
+    }
+    public void UnholdBox(Transform box)
+    {
+        box.SetParent(tempRoom);
     }
 
     private void CheckMirror()
@@ -140,6 +138,12 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("can hold box");
             box = collision.gameObject.transform.parent;
+            box.GetComponent<Box>().Enable();
+        }
+        if (collision.gameObject.layer == LAYER_DOOR)
+        {
+            Door door = collision.gameObject.GetComponent<Door>();
+            door.Enable();
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -147,7 +151,34 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.layer == LAYER_HOLD_TRIGGER)
         {
             Debug.Log("leave box");
+            box.GetComponent<Box>().Disable();
             box = null;
         }
+        if (collision.gameObject.layer == LAYER_DOOR)
+        {
+            Door door = collision.gameObject.GetComponent<Door>();
+            door.Disable();
+        }
+    }
+
+    public void MoveLeft()
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = -1f;
+        transform.localScale = scale;
+
+        Vector3 pos = transform.position;
+        pos.x -= moveSpeed * Time.deltaTime;
+        transform.position = pos;
+    }
+    public void MoveRight()
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = 1f;
+        transform.localScale = scale;
+
+        Vector3 pos = transform.position;
+        pos.x += moveSpeed * Time.deltaTime;
+        transform.position = pos;
     }
 }

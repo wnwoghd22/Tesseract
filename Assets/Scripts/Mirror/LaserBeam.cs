@@ -29,7 +29,7 @@ public class LaserBeam
 
         this.laser = this.laserObj.AddComponent(typeof(LineRenderer)) as LineRenderer;
         this.laser.startWidth = 0.5f;
-        this.laser.endWidth = 0.3f;
+        this.laser.endWidth = 0.5f;
         this.laser.material = material;
         this.laser.startColor = Color.yellow;
         this.laser.endColor = Color.yellow;
@@ -46,6 +46,7 @@ public class LaserBeam
 
         Ray2D ray = new Ray2D(pos, dir);
         RaycastHit2D hit = Physics2D.Raycast(pos + dir * 0.1f, dir, float.PositiveInfinity, mirror); // prevent infinite loop
+        //RaycastHit2D hit = Physics2D.Raycast(pos, dir, float.PositiveInfinity, mirror); // prevent infinite loop
 
         if (hit)
         {

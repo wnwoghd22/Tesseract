@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8170319403921325088}
   - component: {fileID: 468528439216712895}
   - component: {fileID: 2809685754334232976}
+  - component: {fileID: 6258695736624481932}
   m_Layer: 15
   m_Name: MirrorBox
   m_TagString: Untagged
@@ -134,6 +135,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &6258695736624481932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 54465561624778060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e6d386274f41de4a8d9b60523ab4be1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3102223014703271015
 GameObject:
   m_ObjectHideFlags: 0
