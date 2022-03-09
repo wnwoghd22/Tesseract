@@ -313,6 +313,20 @@ public class GameManager : MonoBehaviour
                     }
                     break;
                 case TouchPhase.Stationary:
+                    touchingTime += Time.deltaTime;
+
+                    if (touchingEmpty)
+                    {
+                        MovePlayer(touch.position);
+                    }
+                    else
+                    {
+                        if (touchingMirror)
+                        {
+                            Vector3 dir = touch.position - (Vector2)beganPos;
+                            mirrorLit.Emit(dir.normalized);
+                        }
+                    }
                     break;
                 case TouchPhase.Ended:
                     Debug.Log(touchingTime);
